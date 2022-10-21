@@ -29,10 +29,12 @@
 </head>
 
 <!-- AWP_In_Variable Name='"Asset-DB".AssetData[0].AssetId' -->
-<!-- AWP_In_Variable Name='"Asset-DB".AssetData[0].AssetState' -->
+<!-- AWP_In_Variable Name='"Asset-DB".AssetData[0].OperatingState' -->
 <!-- AWP_In_Variable Name='"Asset-DB".AssetData[0].AlarmState' -->
-<!-- AWP_In_Variable Name='"Asset-DB".AssetData[0].Consumption' -->
-<!-- AWP_In_Variable Name='"Asset-DB".AssetData[0].Production' -->
+<!-- AWP_In_Variable Name='"Asset-DB".AssetData[0].ActiveConsumption' -->
+<!-- AWP_In_Variable Name='"Asset-DB".AssetData[0].ActiveProduction' -->
+<!-- AWP_In_Variable Name='"Asset-DB".AssetData[0].ReactiveCapacitive' -->
+<!-- AWP_In_Variable Name='"Asset-DB".AssetData[0].ReactiveInductive' -->
 <!-- AWP_In_Variable Name='"Asset-DB".AssetData[0].Temperature' -->
 <!-- AWP_In_Variable Name='"Asset-DB".AssetData[0].CapacityLevel' -->
 <!-- AWP_In_Variable Name='"Asset-DB".AssetData[0].ControlState' -->
@@ -47,7 +49,7 @@
     <p>
         Status: <span id="ModbusState"></span>
         <script type="text/javascript">
-            document.getElementById("ModbusState").innerText = parseInt(:="Asset-DB".ModbusState:).toString(16);
+            document.getElementById("ModbusState").innerText = parseInt(:="AssetModbusServer_DB".ModbusState:).toString(16);
         </script>
     </p>
 
@@ -80,13 +82,13 @@
         </tr>
         <tr>
             <td>1</td>
-            <td>AssetState</td>
+            <td>OperatingState</td>
             <td>1</td>
             <td>U16</td>
             <td>ENUM</td>
             <td>0..7</td>
             <td>
-                <select id="AssetState" name='"Asset-DB".AssetData[0].AssetState' value=':="Asset-DB".AssetData[0].AssetState:'>
+                <select id="OperatingState" name='"Asset-DB".AssetData[0].OperatingState' value=':="Asset-DB".AssetData[0].OperatingState:'>
                     <option value="0">Unknown</option>
                     <option value="1">Startup</option>
                     <option value="2">Shutdown</option>
@@ -97,25 +99,25 @@
                     <option value="7">Maintenance</option>
                 </select>
                 <script type="text/javascript">
-                    document.getElementById("AssetState").selectedIndex = :="Asset-DB".AssetData[0].AssetState:;
+                    document.getElementById("OperatingState").selectedIndex = :="Asset-DB".AssetData[0].OperatingState:;
                 </script>
             </td>
             <td></td>
             <td>RO</td>
             <td>Betriebszustand des Assets</td>
         </tr>
-        <tr>
-            <td>2</td>
-            <td>AlarmState</td>
-            <td>2</td>
-            <td>U32</td>
-            <td>FLAGS</td>
-            <td></td>
-            <td><input name='"Asset-DB".AssetData[0].AlarmState' type="text" value=':="Asset-DB".AssetData[0].AlarmState:'></td>
-            <td></td>
-            <td>RO</td>
-            <td>Meldungen / Alarme des Assets (Bitcodiert)</td>
-        </tr>
+<!--        <tr>-->
+<!--            <td>2</td>-->
+<!--            <td>AlarmState 1</td>-->
+<!--            <td>2</td>-->
+<!--            <td>U32</td>-->
+<!--            <td>FLAGS</td>-->
+<!--            <td></td>-->
+<!--            <td><input name='"Asset-DB".AssetData[0].AlarmState' type="text" value=':="Asset-DB".AssetData[0].AlarmState:'></td>-->
+<!--            <td></td>-->
+<!--            <td>RO</td>-->
+<!--            <td>Meldungen / Alarme des Assets (Teil 1, Bitcodiert)</td>-->
+<!--        </tr>-->
         <tr>
             <td>4</td>
             <td>Consumption</td>
@@ -123,7 +125,7 @@
             <td>U32</td>
             <td>FIX0</td>
             <td>0..</td>
-            <td><input name='"Asset-DB".AssetData[0].Consumption' type="text" value=':="Asset-DB".AssetData[0].Consumption:'></td>
+            <td><input name='"Asset-DB".AssetData[0].ActiveConsumption' type="text" value=':="Asset-DB".AssetData[0].ActiveConsumption:'></td>
             <td>W</td>
             <td>RO</td>
             <td>Momentane Leistungsaufnahme (laden / Verbrauch)</td>
@@ -135,10 +137,34 @@
             <td>U32</td>
             <td>FIX0</td>
             <td>0..</td>
-            <td><input name='"Asset-DB".AssetData[0].Production' type="text" value=':="Asset-DB".AssetData[0].Production:'></td>
+            <td><input name='"Asset-DB".AssetData[0].ActiveProduction' type="text" value=':="Asset-DB".AssetData[0].ActiveProduction:'></td>
             <td>W</td>
             <td>RO</td>
             <td>Momentane Leistungsabgabe (entladen / Einspeisung)</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>Blindleistung</td>
+            <td>2</td>
+            <td>U32</td>
+            <td>FIX0</td>
+            <td>0..</td>
+            <td><input name='"Asset-DB".AssetData[0].ReactiveCapacitive' type="text" value=':="Asset-DB".AssetData[0].ReactiveCapacitive:'></td>
+            <td>W</td>
+            <td>RO</td>
+            <td>Momentane Blindleistung (kapazitiv)</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Blindleistung</td>
+            <td>2</td>
+            <td>U32</td>
+            <td>FIX0</td>
+            <td>0..</td>
+            <td><input name='"Asset-DB".AssetData[0].ReactiveInductive' type="text" value=':="Asset-DB".AssetData[0].ReactiveInductive:'></td>
+            <td>W</td>
+            <td>RO</td>
+            <td>Momentane Blindleistung (induktiv)</td>
         </tr>
         <tr>
             <td>8</td>
@@ -199,6 +225,7 @@
                     <option value="0">Inactive</option>
                     <option value="1">Active</option>
                     <option value="2">Prepare</option>
+                    <option value="3">Off</option>
                 </select>
                 <script type="text/javascript">
                     document.getElementById("ControlActivation").selectedIndex = :="Asset-DB".AssetData[0].ControlActivation:;
@@ -215,7 +242,7 @@
             <td>U32</td>
             <td>FIX0</td>
             <td>0..</td>
-            <td><span class="RW">:="Asset-DB".AssetData[0].SetConsume:</span></td>
+            <td><span class="RW">:="Asset-DB".AssetData[0].SetActiveConsume:</span></td>
             <td>W</td>
             <td>RW</td>
             <td>Vorgabe der Leistungsaufnahme (laden / Verbrauch)</td>
@@ -227,7 +254,7 @@
             <td>U32</td>
             <td>FIX0</td>
             <td>0..</td>
-            <td><span class="RW">:="Asset-DB".AssetData[0].SetProduce:</span></td>
+            <td><span class="RW">:="Asset-DB".AssetData[0].SetActiveProduce:</span></td>
             <td>W</td>
             <td>RW</td>
             <td>Vorgabe der Leistungsabgabe (entladen / Einspeisung)</td>
